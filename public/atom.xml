@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Sean In A Box]]></title>
+  <link href="http://seaninabox.github.com/atom.xml" rel="self"/>
+  <link href="http://seaninabox.github.com/"/>
+  <updated>2012-09-21T09:01:57-07:00</updated>
+  <id>http://seaninabox.github.com/</id>
+  <author>
+    <name><![CDATA[Sean]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Rails With a Legacy Oracle Database Part 1]]></title>
+    <link href="http://seaninabox.github.com/blog/2012/09/21/rails-with-a-legacy-oracle-database/"/>
+    <updated>2012-09-21T06:28:00-07:00</updated>
+    <id>http://seaninabox.github.com/blog/2012/09/21/rails-with-a-legacy-oracle-database</id>
+    <content type="html"><![CDATA[<h2> What a nightmare&#8230;.</h2>
+
+
+<p>That pretty much sums of my experience so far.  A little bit of backstory&#8230;. our team was tasked with creating a
+new web based front end for a legacy oracle database.  I&#8217;m not much of a web developer, but I have been trying
+to learn rails in my spare time, so I figured this would be a great learning experience.  I know, I know, this
+task would probably be easier if written in a different language such as PHP, but I did not want to go that
+route. I wasn&#8217;t able to find much information on this subject, so I figured I would try and share my experiences
+in hopes that someone else will benefit from my blunders. Anyhow, let&#8217;s get into it.</p>
+
+<p>Here is my setup:</p>
+
+<p><b>OS Version:</b><br/>
+<code> Ubuntu 12.04 LTS x64 </code></p>
+
+<p>Ruby Version: <br/>
+<code> 1.9.3 </code></p>
+
+<p>Installed Gems:
+<code>
+Using rake (0.9.2.2)
+Using i18n (0.6.0)
+Using multi_json (1.3.6)
+Using activesupport (3.2.8)
+Using builder (3.0.0)
+Using activemodel (3.2.8)
+Using erubis (2.7.0)
+Using journey (1.0.4)
+Using rack (1.4.1)
+Using rack-cache (1.2)
+Using rack-test (0.6.1)
+Using hike (1.2.1)
+Using tilt (1.3.3)
+Using sprockets (2.1.3)
+Using actionpack (3.2.8)
+Using mime-types (1.19)
+Using polyglot (0.3.3)
+Using treetop (1.4.10)
+Using mail (2.4.4)
+Using actionmailer (3.2.8)
+Using arel (3.0.2)
+Using tzinfo (0.3.33)
+Using activerecord (3.2.8)
+Using activerecord-oracle_enhanced-adapter (1.4.1)
+Using activeresource (3.2.8)
+Using coffee-script-source (1.3.3)
+Using execjs (1.4.0)
+Using coffee-script (2.2.0)
+Using rack-ssl (1.3.2)
+Using json (1.7.5)
+Using rdoc (3.12)
+Using thor (0.16.0)
+Using railties (3.2.8)
+Using coffee-rails (3.2.2)
+Using jquery-rails (2.1.1)
+Using libv8 (3.3.10.4)
+Using bundler (1.1.5)
+Using rails (3.2.8)
+Using rails3-generators (0.17.4)
+Using ruby-oci8 (2.1.2)
+Using sass (3.2.1)
+Using sass-rails (3.2.5)
+Using sqlite3 (1.3.6)
+Using therubyracer (0.10.2)
+Using uglifier (1.2.7)
+</code></p>
+
+<p>There are two gems worth noting here, ruby-oci8 and the oracle_enhanced adapter. <strong>You need these.</strong>
+Ruby-oci8 is a ruby interface that is used to interact with the Oracle database.  The oracle_enhanced_adapter actually
+allows you to access your Oracle DB from within the Rails application. Sounds like it might be important :-P</p>
+
+<p>Rails is <strong>very</strong> picky about its <a href="http://itsignals.cascadia.com.au/?p=7">naming convention</a>, which makes working with a legacy database schema
+interesting because it wasn&#8217;t designed with Rails in mind. More on that later, let&#8217;s get started with linking our Rails project to our Oracle Database.</p>
+
+<p>I&#8217;m going to assume you already know how to create a basic rails project.  After that you are going to want to install the following gems:</p>
+
+<p><code> gem install ruby-oci8 </code><br/>
+<code> gem install activerecord-oracle_enhanced-adapter </code></p>
+
+<p>The next step is to edit your config/database.yml file. You are going to want to modify it to look something like this:</p>
+
+<p>  <code> development: </code><br/>
+  <code> adapter: oracle_enhanced </code><br/>
+  <code> database: YOUR_ORACLE_SID </code><br/>
+  <code> host: localhost </code><br/>
+  <code> username: user </code><br/>
+  <code> password: pass </code><br/>
+  <code> port: 1521 </code></p>
+
+<p>Save and exit the database.yml file.  Next we are going to use a scaffold command to build our Rails application from our existing Oracle database. The basic idea is:</p>
+
+<p><code> rails generate scaffold &lt;tablename> &lt;field>:&lt;datatype> --skip-migration </code></p>
+
+<p>We want to make sure that the table name is singular and that the skip migration flag is set.  This makes sure that the scaffold does not create database tables because we are using an existing database table. So, let&#8217;s use a &#8220;User&#8221; table as an example:</p>
+
+<p><code> rails generate scaffold user user_id:integer first_name:string last_name:string email:string --skip-migration </code></p>
+
+<p>Next, let&#8217;s go check out the model that was generated by the scaffold script and make some changes.  The file should be located in <code>app/models/user.rb</code>. It will look
+something like this:</p>
+
+<p><code>class User &lt; ActiveRecord::Base </code><br/>
+<code> attr_accessible :user_id, :first_name, :last_name, :email</code><br/>
+<code>end</code></p>
+
+<p>Now maybe your legacy &#8220;User&#8221; table is not called &#8220;User&#8221;.  That is fine.  Just set the table name with:</p>
+
+<p><code>set_table_name "My_Users_Table_Name"</code></p>
+
+<p>Finally, let&#8217;s set our primary key.</p>
+
+<p><code> set_primary_key :user_id </code></p>
+
+<p>We should be able to run our rails server with <code>rails s</code> and browse to <code>http://localhost:3000/users</code> and see a view that was generated by the scaffold script that contains our legacy database data!</p>
+
+<p>That&#8217;s it for now, I&#8217;ll be going more in depth on this subject and posting here as I get time.  Happy coding!</p>
+
+<p><strong>Sources:</strong><br/>
+<a href="http://www.oracle.com/webfolder/technetwork/tutorials/obe/db/oow10/rubyhol/instructions/rubyrails.htm">Oracle</a><br/>
+<a href="http://www.skorks.com/2010/02/using-ruby-on-rails-with-oracle-and-deploying-it-all-to-tomcat/">Alan Skorkin</a><br/>
+<a href="http://practicaldev.blogspot.com/2009/07/rails-with-legacy-oracle-db.html">Practical Development</a><br/>
+<a href="http://blog.rayapps.com/2010/09/09/oracle-enhanced-adapter-1-3-1-and-how-to-use-it-with-rails3/">Raimonds Simanovskis</a></p>
+]]></content>
+  </entry>
+  
+</feed>

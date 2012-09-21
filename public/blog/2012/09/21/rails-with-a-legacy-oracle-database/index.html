@@ -1,0 +1,381 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Rails With a Legacy Oracle Database Part 1 - Sean In A Box</title>
+  <meta name="author" content="Sean">
+
+  
+  <meta name="description" content="What a nightmare&#8230;. That pretty much sums of my experience so far. A little bit of backstory&#8230;. our team was tasked with creating a
+new &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://seaninabox.github.com/blog/2012/09/21/rails-with-a-legacy-oracle-database/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Sean In A Box" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <center><h1><a href="/">Sean In A Box</a></h1></center>
+  
+    <center><h2>A smattering of information I find interesting</h2></center>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:seaninabox.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/about">About</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Rails With a Legacy Oracle Database Part 1</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-09-21T06:28:00-07:00" pubdate data-updated="true">Sep 21<span>st</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2> What a nightmare&#8230;.</h2>
+
+
+<p>That pretty much sums of my experience so far.  A little bit of backstory&#8230;. our team was tasked with creating a
+new web based front end for a legacy oracle database.  I&#8217;m not much of a web developer, but I have been trying
+to learn rails in my spare time, so I figured this would be a great learning experience.  I know, I know, this
+task would probably be easier if written in a different language such as PHP, but I did not want to go that
+route. I wasn&#8217;t able to find much information on this subject, so I figured I would try and share my experiences
+in hopes that someone else will benefit from my blunders. Anyhow, let&#8217;s get into it.</p>
+
+<p>Here is my setup:</p>
+
+<p><b>OS Version:</b><br/>
+<code> Ubuntu 12.04 LTS x64 </code></p>
+
+<p>Ruby Version: <br/>
+<code> 1.9.3 </code></p>
+
+<p>Installed Gems:
+<code>
+Using rake (0.9.2.2)
+Using i18n (0.6.0)
+Using multi_json (1.3.6)
+Using activesupport (3.2.8)
+Using builder (3.0.0)
+Using activemodel (3.2.8)
+Using erubis (2.7.0)
+Using journey (1.0.4)
+Using rack (1.4.1)
+Using rack-cache (1.2)
+Using rack-test (0.6.1)
+Using hike (1.2.1)
+Using tilt (1.3.3)
+Using sprockets (2.1.3)
+Using actionpack (3.2.8)
+Using mime-types (1.19)
+Using polyglot (0.3.3)
+Using treetop (1.4.10)
+Using mail (2.4.4)
+Using actionmailer (3.2.8)
+Using arel (3.0.2)
+Using tzinfo (0.3.33)
+Using activerecord (3.2.8)
+Using activerecord-oracle_enhanced-adapter (1.4.1)
+Using activeresource (3.2.8)
+Using coffee-script-source (1.3.3)
+Using execjs (1.4.0)
+Using coffee-script (2.2.0)
+Using rack-ssl (1.3.2)
+Using json (1.7.5)
+Using rdoc (3.12)
+Using thor (0.16.0)
+Using railties (3.2.8)
+Using coffee-rails (3.2.2)
+Using jquery-rails (2.1.1)
+Using libv8 (3.3.10.4)
+Using bundler (1.1.5)
+Using rails (3.2.8)
+Using rails3-generators (0.17.4)
+Using ruby-oci8 (2.1.2)
+Using sass (3.2.1)
+Using sass-rails (3.2.5)
+Using sqlite3 (1.3.6)
+Using therubyracer (0.10.2)
+Using uglifier (1.2.7)
+</code></p>
+
+<p>There are two gems worth noting here, ruby-oci8 and the oracle_enhanced adapter. <strong>You need these.</strong>
+Ruby-oci8 is a ruby interface that is used to interact with the Oracle database.  The oracle_enhanced_adapter actually
+allows you to access your Oracle DB from within the Rails application. Sounds like it might be important :-P</p>
+
+<p>Rails is <strong>very</strong> picky about its <a href="http://itsignals.cascadia.com.au/?p=7">naming convention</a>, which makes working with a legacy database schema
+interesting because it wasn&#8217;t designed with Rails in mind. More on that later, let&#8217;s get started with linking our Rails project to our Oracle Database.</p>
+
+<p>I&#8217;m going to assume you already know how to create a basic rails project.  After that you are going to want to install the following gems:</p>
+
+<p><code> gem install ruby-oci8 </code><br/>
+<code> gem install activerecord-oracle_enhanced-adapter </code></p>
+
+<p>The next step is to edit your config/database.yml file. You are going to want to modify it to look something like this:</p>
+
+<p>  <code> development: </code><br/>
+  <code> adapter: oracle_enhanced </code><br/>
+  <code> database: YOUR_ORACLE_SID </code><br/>
+  <code> host: localhost </code><br/>
+  <code> username: user </code><br/>
+  <code> password: pass </code><br/>
+  <code> port: 1521 </code></p>
+
+<p>Save and exit the database.yml file.  Next we are going to use a scaffold command to build our Rails application from our existing Oracle database. The basic idea is:</p>
+
+<p><code> rails generate scaffold &lt;tablename> &lt;field>:&lt;datatype> --skip-migration </code></p>
+
+<p>We want to make sure that the table name is singular and that the skip migration flag is set.  This makes sure that the scaffold does not create database tables because we are using an existing database table. So, let&#8217;s use a &#8220;User&#8221; table as an example:</p>
+
+<p><code> rails generate scaffold user user_id:integer first_name:string last_name:string email:string --skip-migration </code></p>
+
+<p>Next, let&#8217;s go check out the model that was generated by the scaffold script and make some changes.  The file should be located in <code>app/models/user.rb</code>. It will look
+something like this:</p>
+
+<p><code>class User &lt; ActiveRecord::Base </code><br/>
+<code> attr_accessible :user_id, :first_name, :last_name, :email</code><br/>
+<code>end</code></p>
+
+<p>Now maybe your legacy &#8220;User&#8221; table is not called &#8220;User&#8221;.  That is fine.  Just set the table name with:</p>
+
+<p><code>set_table_name "My_Users_Table_Name"</code></p>
+
+<p>Finally, let&#8217;s set our primary key.</p>
+
+<p><code> set_primary_key :user_id </code></p>
+
+<p>We should be able to run our rails server with <code>rails s</code> and browse to <code>http://localhost:3000/users</code> and see a view that was generated by the scaffold script that contains our legacy database data!</p>
+
+<p>That&#8217;s it for now, I&#8217;ll be going more in depth on this subject and posting here as I get time.  Happy coding!</p>
+
+<p><strong>Sources:</strong><br/>
+<a href="http://www.oracle.com/webfolder/technetwork/tutorials/obe/db/oow10/rubyhol/instructions/rubyrails.htm">Oracle</a><br/>
+<a href="http://www.skorks.com/2010/02/using-ruby-on-rails-with-oracle-and-deploying-it-all-to-tomcat/">Alan Skorkin</a><br/>
+<a href="http://practicaldev.blogspot.com/2009/07/rails-with-legacy-oracle-db.html">Practical Development</a><br/>
+<a href="http://blog.rayapps.com/2010/09/09/oracle-enhanced-adapter-1-3-1-and-how-to-use-it-with-rails3/">Raimonds Simanovskis</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Sean</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-09-21T06:28:00-07:00" pubdate data-updated="true">Sep 21<span>st</span>, 2012</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://seaninabox.github.com/blog/2012/09/21/rails-with-a-legacy-oracle-database/" data-via="SeanInABox" data-counturl="http://seaninabox.github.com/blog/2012/09/21/rails-with-a-legacy-oracle-database/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/09/21/rails-with-a-legacy-oracle-database/">Rails With a Legacy Oracle Database Part 1</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/SeanInABox">@SeanInABox</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'SeanInABox',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("SeanInABox", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/SeanInABox" class="twitter-follow-button" data-show-count="false">Follow @SeanInABox</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Sean -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
