@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Sean In A Box]]></title>
-  <link href="http://seaninabox.github.com/atom.xml" rel="self"/>
-  <link href="http://seaninabox.github.com/"/>
-  <updated>2012-09-21T09:01:57-07:00</updated>
-  <id>http://seaninabox.github.com/</id>
+  <link href="http://SeanInABox.github.com/atom.xml" rel="self"/>
+  <link href="http://SeanInABox.github.com/"/>
+  <updated>2012-09-21T09:12:42-07:00</updated>
+  <id>http://SeanInABox.github.com/</id>
   <author>
     <name><![CDATA[Sean]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Rails With a Legacy Oracle Database Part 1]]></title>
-    <link href="http://seaninabox.github.com/blog/2012/09/21/rails-with-a-legacy-oracle-database/"/>
+    <link href="http://SeanInABox.github.com/blog/2012/09/21/rails-with-a-legacy-oracle-database/"/>
     <updated>2012-09-21T06:28:00-07:00</updated>
-    <id>http://seaninabox.github.com/blog/2012/09/21/rails-with-a-legacy-oracle-database</id>
+    <id>http://SeanInABox.github.com/blog/2012/09/21/rails-with-a-legacy-oracle-database</id>
     <content type="html"><![CDATA[<h2> What a nightmare&#8230;.</h2>
 
 
