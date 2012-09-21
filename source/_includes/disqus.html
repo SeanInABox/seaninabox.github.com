@@ -1,5 +1,7 @@
 {% comment %} Load script if disquss comments are enabled and `page.comments` is either empty (index) or set to true {% endcomment %}
 {% if site.disqus_short_name and page.comments != false %}
+<script type="text/javascript" src="http://seaninabox.disqus.com/combination_widget.js?num_items=5&hide_mods=0&color=blue&default_tab=people&excerpt_length=200"></script><a href="http://disqus.com/">Powered by Disqus</a>
+
 <script type="text/javascript">
       var disqus_shortname = '{{ site.disqus_short_name }}';
       {% if page.comments == true %}
